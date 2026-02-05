@@ -11,14 +11,14 @@
 
         <!-- LEFT: LOGO + BRAND NAME INLINE -->
         <div class="col-md-4 d-flex align-items-center">
-            <img src="/Complaint-Management-System/nflimage.png"
+            <img src="/NFLGuestHouse/images/nflimage.png"
                  alt="NFL Logo"
                  style="height:70px;"
                  class="mr-3 header-logo">
 
             <h4 class="mb-0 text-primary header-title">
-                <i class="fas fa-tools mr-2"></i>
-                Complaint Management System
+                <i class="fas fa-building mr-2"></i>
+                Guest House Management System
             </h4>
         </div>
 
@@ -37,7 +37,7 @@
         <!-- RIGHT: USER PROFILE DROPDOWN -->
         <div class="col-md-4 text-right header-user">
             <%
-                User user1 = (User) session.getAttribute("Userobj");
+                User user1 = (User) session.getAttribute("userObj");
                 if (user1 != null) {
             %>
                 <div class="dropdown d-inline-block">
@@ -49,7 +49,7 @@
                             aria-expanded="false"
                             style="font-size:1.05rem;">
                         <i class="fas fa-user-circle mr-2" style="font-size:1.3rem;"></i>
-                        <span class="user-name"><%= user1.getUsername() %></span>
+                        <span class="user-name"><%= user1.getFullName() %></span>
                     </button>
 
                     <div class="dropdown-menu dropdown-menu-right shadow-sm"
@@ -102,6 +102,7 @@
 
         <!-- LEFT MENU -->
         <ul class="navbar-nav mr-auto">
+
             <li class="nav-item active">
                 <a class="nav-link" href="home.jsp">
                     <i class="fas fa-chart-line mr-1"></i> Dashboard
@@ -109,48 +110,35 @@
             </li>
 
             <li class="nav-item active">
-                <a class="nav-link" href="addUserComplaint.jsp">
-                    <i class="fas fa-plus-circle mr-1"></i> Add Complaint
+                <a class="nav-link" href="admin/room_master.jsp">
+                    <i class="fas fa-bed mr-1"></i> Room Master
                 </a>
             </li>
-            
-          <!--   <li class="nav-item active">
-			    <a class="nav-link" href="allComplaints.jsp">
-			        <i class="fas fa-list mr-1"></i> All Complaints
-			    </a>
-			</li> -->
-			
-			<li class="nav-item active">
-			    <a class="nav-link" href="civilComplaints.jsp">
-			        <i class="fas fa-building mr-1"></i> Civil Complaints
-			    </a>
-			</li>
-			
-			<li class="nav-item active">
-			    <a class="nav-link" href="eComplaints.jsp">
-			        <i class="fas fa-bolt mr-1"></i> Electrical Complaints
-			    </a>
-			</li>
-			 <li class="nav-item active">
-			    <a class="nav-link" href="closedComplaints.jsp">
-			        <i class="fas fa-list mr-1"></i> Closed Complaints
-			    </a>
-			</li>
 
-            <!-- <li class="nav-item dropdown active">
-                <a class="nav-link dropdown-toggle"
-                   href="#"
-                   id="navbarDropdown"
-                   data-toggle="dropdown">
-                    <i class="fas fa-list mr-1"></i> View Complaints
+            <li class="nav-item active">
+                <a class="nav-link" href="booking/new_booking.jsp">
+                    <i class="fas fa-calendar-plus mr-1"></i> New Booking
                 </a>
+            </li>
 
-                <div class="dropdown-menu shadow-sm">
-                    <a class="dropdown-item" href="allComplaints.jsp">All Complaints</a>
-                    <a class="dropdown-item" href="civilComplaints.jsp">Civil Complaints</a>
-                    <a class="dropdown-item" href="eComplaints.jsp">Electrical Complaints</a>
-                </div>
-            </li> -->
+            <li class="nav-item active">
+                <a class="nav-link" href="booking/checkin.jsp">
+                    <i class="fas fa-sign-in-alt mr-1"></i> Check-In / Check-Out
+                </a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="billing/bill_list.jsp">
+                    <i class="fas fa-file-invoice mr-1"></i> Billing
+                </a>
+            </li>
+
+            <li class="nav-item active">
+                <a class="nav-link" href="reports/reports.jsp">
+                    <i class="fas fa-chart-bar mr-1"></i> Reports
+                </a>
+            </li>
+
         </ul>
 
         <!-- RIGHT MENU -->
@@ -186,49 +174,3 @@
     </div>
   </div>
 </div>
-
-<!-- ================= MOBILE ONLY CHANGES ================= -->
-<style>
-/* ================= MOBILE VIEW ONLY ================= */
-@media (max-width: 768px) {
-
-    /* Stack header sections */
-    .header-company {
-        margin-top: 8px;
-        margin-bottom: 8px;
-    }
-
-    /* Reduce logo size */
-    .header-logo {
-        height: 52px !important;
-    }
-
-    /* Reduce title size */
-    .header-title {
-        font-size: 1.05rem;
-    }
-
-    /* Hide long username, keep icon */
-    .user-name {
-        display: none;
-    }
-
-    .user-btn {
-        padding-left: 18px !important;
-        padding-right: 18px !important;
-    }
-
-    /* Navbar buttons full width */
-    .navbar-actions a {
-        width: 100%;
-        margin-bottom: 6px;
-        text-align: center;
-    }
-
-    /* Better touch targets */
-    .navbar-nav .nav-link {
-        padding: 12px 16px;
-        font-size: 1rem;
-    }
-}
-</style>
