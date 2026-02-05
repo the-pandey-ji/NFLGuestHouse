@@ -76,6 +76,9 @@
                 </div>
             <%
                 }
+                else {
+                	response.sendRedirect("index.jsp");
+                }
             %>
         </div>
 
@@ -110,7 +113,7 @@
             </li>
 
             <li class="nav-item active">
-                <a class="nav-link" href="admin/room_master.jsp">
+                <a class="nav-link" href="viewRooms">
                     <i class="fas fa-bed mr-1"></i> Room Master
                 </a>
             </li>

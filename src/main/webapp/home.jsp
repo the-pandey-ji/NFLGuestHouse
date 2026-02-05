@@ -81,7 +81,7 @@
     <div class="row g-4">
 
         <div class="col-md-3">
-            <a href="admin/room_master.jsp">
+            <a href="viewRooms">
                 <div class="dashboard-card">
                     <div class="icon-box">
                         <i class="fas fa-bed"></i>
