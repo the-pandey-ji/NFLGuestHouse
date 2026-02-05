@@ -119,7 +119,7 @@
             </li>
 
             <li class="nav-item active">
-                <a class="nav-link" href="booking/new_booking.jsp">
+                <a class="nav-link" href="newBooking">
                     <i class="fas fa-calendar-plus mr-1"></i> New Booking
                 </a>
             </li>

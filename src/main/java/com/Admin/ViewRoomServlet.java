@@ -18,7 +18,7 @@ public class ViewRoomServlet extends HttpServlet {
             throws IOException {
 
         RoomDAO dao = new RoomDAO();
-        List<Room> list = dao.getAllRooms();
+        List<Room> list = dao.getRoomMasterStatus();
 
         req.setAttribute("roomList", list);
         try {

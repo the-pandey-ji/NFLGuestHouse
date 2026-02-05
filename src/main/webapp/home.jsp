@@ -92,7 +92,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="booking/new_booking.jsp">
+            <a href="newBooking">
                 <div class="dashboard-card">
                     <div class="icon-box">
                         <i class="fas fa-calendar-check"></i>
