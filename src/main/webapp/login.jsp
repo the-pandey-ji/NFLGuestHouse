@@ -1,5 +1,4 @@
-<%@ page import="com.DB.DBConnect" %>
-<%@ page import="java.sql.Connection" %>
+
 
 <!DOCTYPE html>
 <html>
@@ -302,7 +301,8 @@ label {
 
     <!-- BRAND -->
     <div class="brand-logo">
-        <img src="/NFLGuestHouse/src/main/webapp/nflimage.png" alt="NFL Logo">
+        <img src="<%=request.getContextPath()%>/images/nflimage.png" alt="NFL Logo">
+
     </div>
 
     <!-- COMPANY -->
