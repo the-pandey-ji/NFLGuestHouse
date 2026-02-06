@@ -125,7 +125,7 @@
             </li>
 
             <li class="nav-item active">
-                <a class="nav-link" href="booking/checkin.jsp">
+                <a class="nav-link" href="<%=request.getContextPath()%>/booking/checkin_checkout.jsp">
                     <i class="fas fa-sign-in-alt mr-1"></i> Check-In / Check-Out
                 </a>
             </li>

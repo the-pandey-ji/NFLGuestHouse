@@ -103,7 +103,7 @@
         </div>
 
         <div class="col-md-3">
-            <a href="booking/checkin.jsp">
+            <a href="<%=request.getContextPath()%>/booking/checkin_checkout.jsp">
                 <div class="dashboard-card">
                     <div class="icon-box">
                         <i class="fas fa-sign-in-alt"></i>

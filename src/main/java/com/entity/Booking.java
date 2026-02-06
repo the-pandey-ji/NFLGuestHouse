@@ -19,6 +19,16 @@ public class Booking {
 
     private String status;           // BOOKED / CHECKED_IN / CHECKED_OUT
     private String createdBy;
+    private Timestamp createdDate;
+
+    public Timestamp getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Timestamp createdDate) {
+        this.createdDate = createdDate;
+    }
+
 
     /* ===== Getters & Setters ===== */
 
