@@ -1,3 +1,5 @@
 eclipse.preferences.version=1
+encoding//src/main/webapp/admin/billing.jsp=UTF-8
+encoding//src/main/webapp/admin/print_bill.jsp=UTF-8
 encoding//src/main/webapp/admin/room_master.jsp=UTF-8
 encoding/<project>=UTF-8

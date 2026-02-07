@@ -283,6 +283,110 @@ public class BookingDAO {
         return false;
     }
 
+    
+    
+    public boolean generateBill(
+            int bookingId,
+            double breakfast,
+            double lunch,
+            double dinner,
+            String paymentMode) {
+
+        try (Connection con = DBConnect.getConnection()) {
+
+            // 1️⃣ Fetch booking + room + rent
+            String fetchSql =
+                "SELECT b.CHECKIN_DATETIME, b.CHECKOUT_DATETIME, b.GUEST_CATEGORY, " +
+                "r.NFL_RENT, r.GOVT_RENT, r.PRIVATE_RENT " +
+                "FROM PERSONNEL.GH_BOOKING_MAIN b " +
+                "JOIN PERSONNEL.GH_ROOM_MASTER r ON b.ROOM_ID = r.ROOM_ID " +
+                "WHERE b.BOOKING_ID=?";
+
+            PreparedStatement ps1 = con.prepareStatement(fetchSql);
+            ps1.setInt(1, bookingId);
+            ResultSet rs = ps1.executeQuery();
+
+            if (!rs.next()) return false;
+
+            Timestamp in = rs.getTimestamp("CHECKIN_DATETIME");
+            Timestamp out = rs.getTimestamp("CHECKOUT_DATETIME");
+            String category = rs.getString("GUEST_CATEGORY");
+
+            double rent;
+            if ("NFL".equals(category)) {
+                rent = rs.getDouble("NFL_RENT");
+            } else if ("GOVT".equals(category)) {
+                rent = rs.getDouble("GOVT_RENT");
+            } else {
+                rent = rs.getDouble("PRIVATE_RENT");
+            }
+
+            // 2️⃣ Calculate days
+            long hours =
+                (out.getTime() - in.getTime()) / (1000 * 60 * 60);
+            long days = (long) Math.ceil(hours / 24.0);
+            if (days == 0) days = 1;
+
+            double roomTotal = days * rent;
+            double foodTotal = breakfast + lunch + dinner;
+            double grandTotal = roomTotal + foodTotal;
+
+            // 3️⃣ Update billing
+            String updateSql =
+                "UPDATE PERSONNEL.GH_BOOKING_MAIN SET " +
+                "NO_OF_DAYS=?, ROOM_CHARGE_TOTAL=?, FOOD_TOTAL=?, " +
+                "GRAND_TOTAL=?, PAYMENT_MODE=? " +
+                "WHERE BOOKING_ID=?";
+
+            PreparedStatement ps2 = con.prepareStatement(updateSql);
+            ps2.setLong(1, days);
+            ps2.setDouble(2, roomTotal);
+            ps2.setDouble(3, foodTotal);
+            ps2.setDouble(4, grandTotal);
+            ps2.setString(5, paymentMode);
+            ps2.setInt(6, bookingId);
+
+            return ps2.executeUpdate() == 1;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    
+    
+    public List<Booking> getCheckedInBookings() {
+
+        List<Booking> list = new ArrayList<>();
+
+        try {
+            Connection con = DBConnect.getConnection();
+
+            String sql =
+              "SELECT b.BOOKING_ID, b.GUEST_NAME, r.ROOM_NO, b.CHECKIN_DATETIME " +
+              "FROM PERSONNEL.GH_BOOKING_MAIN b " +
+              "JOIN PERSONNEL.GH_ROOM_MASTER r ON b.ROOM_ID = r.ROOM_ID " +
+              "WHERE b.STATUS = 'CHECKED_IN' " +
+              "ORDER BY b.CHECKIN_DATETIME";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Booking b = new Booking();
+                b.setBookingId(rs.getInt("BOOKING_ID"));
+                b.setGuestName(rs.getString("GUEST_NAME"));
+                b.setRoomNo(rs.getString("ROOM_NO"));
+                b.setCheckinDatetime(rs.getTimestamp("CHECKIN_DATETIME"));
+                list.add(b);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
     	
     
 

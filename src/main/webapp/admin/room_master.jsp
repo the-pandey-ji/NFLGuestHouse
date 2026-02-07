@@ -85,10 +85,11 @@
                         </a>
 
                     <% } else if ("OCCUPIED".equals(st)) { %>
-                        <a href="checkoutPage?bookingId=<%= r.getBookingId() %>"
-                           class="btn btn-danger btn-sm">
-                            Checkout
-                        </a>
+                        <a href="<%=request.getContextPath()%>/billing?bookingId=<%=r.getBookingId()%>"
+						   class="btn btn-danger btn-sm">
+						   Checkout
+						</a>
+
 
                     <% } else if ("AVAILABLE".equals(st)) { %>
                         <button class="btn btn-secondary btn-sm" disabled>

@@ -204,7 +204,7 @@
 </div>
 
 <!-- ================= CHECK-OUT ================= -->
-<div id="checkoutDiv" class="section" style="display:none;">
+<%-- <div id="checkoutDiv" class="section" style="display:none;">
 <h5>Check-Out</h5>
 
 <form action="<%=request.getContextPath()%>/checkInOut" method="post">
@@ -219,7 +219,56 @@
 
 <button class="btn btn-danger mt-3">Confirm Check-Out</button>
 </form>
+</div> --%>
+
+<!-- ================= CHECK-OUT ================= -->
+<div id="checkoutDiv" class="section" style="display:none;">
+<h5>Check-Out (Generate Bill)</h5>
+
+<form action="<%=request.getContextPath()%>/billing" method="get">
+
+<input type="hidden" name="fromCheckout" value="true">
+
+<label>Select Checked-In Guest</label>
+<select name="bookingId" class="form-control" required>
+    <option value="">-- Booking | Guest | Room | Check-In --</option>
+
+    <%
+        List<Booking> checkedInList =
+            (List<Booking>) request.getAttribute("checkedInList");
+
+        if (checkedInList != null) {
+            for (Booking b : checkedInList) {
+    %>
+        <option value="<%= b.getBookingId() %>">
+            <%= b.getBookingId() %> |
+            <%= b.getGuestName() %> |
+            Room <%= b.getRoomNo() %> |
+            <%= b.getCheckinDatetime() %>
+        </option>
+    <%
+            }
+        }
+    %>
+</select>
+
+<label class="mt-3">Check-Out Date & Time</label>
+<input type="datetime-local"
+       name="checkoutDatetime"
+       class="form-control"
+       required>
+<p class="text-muted mt-2">
+Only currently checked-in guests are shown.
+</p>
+
+<button class="btn btn-danger mt-3">
+Proceed to Billing
+</button>
+
+</form>
 </div>
+
+
 
 <!-- ================= CANCEL BOOKING ================= -->
 <div id="cancelDiv" class="section" style="display:none;">

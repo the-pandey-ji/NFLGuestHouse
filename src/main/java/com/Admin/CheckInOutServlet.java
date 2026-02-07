@@ -98,15 +98,15 @@ public class CheckInOutServlet extends HttpServlet {
             );
         }
         // ===== CHECK-OUT =====
-        else if ("CHECKOUT".equals(mode)) {
-
-            int bookingId = Integer.parseInt(req.getParameter("bookingId"));
-            String dt = req.getParameter("checkoutDatetime");
-            Timestamp checkoutTs =
-                Timestamp.valueOf(dt.replace("T", " ") + ":00");
-
-            result = dao.checkOut(bookingId, checkoutTs);
-        }
+		/*
+		 * else if ("CHECKOUT".equals(mode)) {
+		 * 
+		 * int bookingId = Integer.parseInt(req.getParameter("bookingId")); String dt =
+		 * req.getParameter("checkoutDatetime"); Timestamp checkoutTs =
+		 * Timestamp.valueOf(dt.replace("T", " ") + ":00");
+		 * 
+		 * result = dao.checkOut(bookingId, checkoutTs); }
+		 */
         // ===== CANCEL BOOKING =====
         else if ("CANCEL".equals(mode)) {
 

@@ -22,14 +22,14 @@ public class CheckInPageServlet extends HttpServlet {
 
         BookingDAO dao = new BookingDAO();
 
-        // BOOKED bookings for check-in
-        List<Booking> bookedList = dao.getBookedBookings();
+        req.setAttribute("bookedList", dao.getBookedBookings());
+        req.setAttribute("availableRooms", dao.getAvailableRooms());
 
-        // AVAILABLE rooms for direct check-in
-        List<Room> availableRooms = dao.getAvailableRooms();
-
-        req.setAttribute("bookedList", bookedList);
-        req.setAttribute("availableRooms", availableRooms);
+        // 🔴 ADD THIS
+        req.setAttribute(
+            "checkedInList",
+            dao.getCheckedInBookings()
+        );
 
         req.getRequestDispatcher(
             "/booking/checkin_checkout.jsp"
