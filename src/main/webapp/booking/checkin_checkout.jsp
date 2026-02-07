@@ -54,7 +54,9 @@
 <div id="bookingDiv" class="section" style="display:none;">
 <h5>Check-In (With Booking)</h5>
 
-<form action="<%=request.getContextPath()%>/checkInOut" method="post">
+<form action="<%=request.getContextPath()%>/checkInOut"
+      method="post"
+      enctype="multipart/form-data">
 <input type="hidden" name="mode" value="BOOKING">
 
 <label>Booking</label>
@@ -81,6 +83,37 @@
 <label class="mt-2">Check-In Date & Time</label>
 <input type="datetime-local" name="checkinDatetime"
        class="form-control" required>
+       
+       <label class="mt-2">Address</label>
+<textarea name="address"
+          class="form-control"
+          required></textarea>
+
+<label class="mt-2">ID Type</label>
+<select name="idType" class="form-control" required>
+    <option value="">-- Select --</option>
+    <option>Aadhaar</option>
+    <option>Passport</option>
+    <option>Voter ID</option>
+    <option>Official ID</option>
+</select>
+
+<label class="mt-2">ID Number</label>
+<input type="text" name="idNumber"
+       class="form-control" required>
+
+<label class="mt-2">ID Proof Photo</label>
+<input type="file" name="idPhoto"
+       class="form-control"
+       accept="image/*"
+       required>
+
+<label class="mt-2">Guest Live Photo</label>
+<input type="file" name="guestPhoto"
+       class="form-control"
+       accept="image/*"
+       required>
+       
 
 <button class="btn btn-primary mt-3">Confirm Check-In</button>
 </form>
@@ -90,7 +123,9 @@
 <div id="directDiv" class="section" style="display:none;">
 <h5>Direct Check-In (Walk-In)</h5>
 
-<form action="<%=request.getContextPath()%>/checkInOut" method="post">
+<form action="<%=request.getContextPath()%>/checkInOut"
+      method="post"
+      enctype="multipart/form-data">
 <input type="hidden" name="mode" value="DIRECT">
 
 <label>Room</label>
@@ -133,6 +168,36 @@
 <label class="mt-2">Check-In Date & Time</label>
 <input type="datetime-local" name="checkinDatetime"
        class="form-control" required>
+       <label class="mt-2">Address</label>
+<textarea name="address"
+          class="form-control"
+          required></textarea>
+
+<label class="mt-2">ID Type</label>
+<select name="idType" class="form-control" required>
+    <option value="">-- Select --</option>
+    <option>Aadhaar</option>
+    <option>Passport</option>
+    <option>Voter ID</option>
+    <option>Official ID</option>
+</select>
+
+<label class="mt-2">ID Number</label>
+<input type="text" name="idNumber"
+       class="form-control" required>
+
+<label class="mt-2">ID Proof Photo</label>
+<input type="file" name="idPhoto"
+       class="form-control"
+       accept="image/*"
+       required>
+
+<label class="mt-2">Guest Live Photo</label>
+<input type="file" name="guestPhoto"
+       class="form-control"
+       accept="image/*"
+       required>
+       
 
 <button class="btn btn-success mt-3">Direct Check-In</button>
 </form>

@@ -1,5 +1,6 @@
 package com.DAO;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -127,12 +128,11 @@ public class BookingDAO {
     
     public boolean cancelBooking(int bookingId) {
 
-        try {
-            Connection con = DBConnect.getConnection();
+        try (Connection con = DBConnect.getConnection()) {
 
             String sql =
               "UPDATE PERSONNEL.GH_BOOKING_MAIN " +
-              "SET STATUS='AVAILABLE' " +
+              "SET STATUS='CANCELLED' " +
               "WHERE BOOKING_ID=? AND STATUS='BOOKED'";
 
             PreparedStatement ps = con.prepareStatement(sql);
@@ -146,46 +146,8 @@ public class BookingDAO {
         return false;
     }
 
- // Check-in booking
-    public boolean checkIn(int bookingId, Timestamp checkinTs) {
 
-        try (Connection con = DBConnect.getConnection()) {
-
-            con.setAutoCommit(false);
-
-            String bookingSql =
-              "UPDATE PERSONNEL.GH_BOOKING_MAIN " +
-              "SET CHECKIN_DATETIME=?, STATUS='CHECKED_IN' " +
-              "WHERE BOOKING_ID=? AND STATUS='BOOKED'";
-
-            PreparedStatement ps1 = con.prepareStatement(bookingSql);
-            ps1.setTimestamp(1, checkinTs);
-            ps1.setInt(2, bookingId);
-
-            int a = ps1.executeUpdate();
-
-            String roomSql =
-              "UPDATE PERSONNEL.GH_ROOM_MASTER SET STATUS='OCCUPIED' " +
-              "WHERE ROOM_ID = (" +
-              " SELECT ROOM_ID FROM PERSONNEL.GH_BOOKING_MAIN WHERE BOOKING_ID=?)";
-
-            PreparedStatement ps2 = con.prepareStatement(roomSql);
-            ps2.setInt(1, bookingId);
-
-            int b = ps2.executeUpdate();
-
-            if (a == 1 && b == 1) {
-                con.commit();
-                return true;
-            }
-            con.rollback();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
+  
 
     public boolean checkOut(int bookingId, Timestamp checkoutTs) {
 
@@ -225,58 +187,102 @@ public class BookingDAO {
         }
         return false;
     }
+    
+    
+
+    /* ================= CHECK-IN WITH BOOKING ================= */
+    public boolean checkInWithBooking(
+            int bookingId,
+            String address,
+            String idType,
+            String idNumber,
+            InputStream idPhoto,
+            InputStream guestPhoto,
+            Timestamp checkinTs,
+            String createdBy) {
+
+        try (Connection con = DBConnect.getConnection()) {
+
+            String sql =
+              "UPDATE PERSONNEL.GH_BOOKING_MAIN SET " +
+              "ADDRESS=?, ID_TYPE=?, ID_NUMBER=?, " +
+              "ID_PHOTO=?, GUEST_PHOTO=?, " +
+              "CHECKIN_DATETIME=?, STATUS='CHECKED_IN' , CREATED_BY=? " +
+              "WHERE BOOKING_ID=? AND STATUS='BOOKED'";
+
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, address);
+            ps.setString(2, idType);
+            ps.setString(3, idNumber);
+            ps.setBlob(4, idPhoto);
+            ps.setBlob(5, guestPhoto);
+            ps.setTimestamp(6, checkinTs);
+            ps.setString(7, createdBy);
+            ps.setInt(8, bookingId);
+            
+
+            return ps.executeUpdate() == 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
 
     public boolean directCheckIn(
             int roomId,
             String guestName,
             String mobile,
-            String category,
-            String type,
+            String address,
+            String guestCategory,
+            String guestType,
+            String idType,
+            String idNumber,
+            InputStream idPhoto,
+            InputStream guestPhoto,
             Timestamp checkinTs,
             String createdBy) {
+    	
+		/*
+		 * System.out.println("Direct Check-In: " + guestName + ", Room ID: " + roomId);
+		 * System.out.println("ID Type: " + idType + ", ID Number: " + idNumber);
+		 * System.out.println("Created by: " + createdBy);
+		 */
+        try {
+            Connection con = DBConnect.getConnection();
 
-    	 try (Connection con = DBConnect.getConnection()) {
+            String sql =
+              "INSERT INTO PERSONNEL.GH_BOOKING_MAIN " +
+              "(BOOKING_ID, ROOM_ID, GUEST_NAME, MOBILE_NO, ADDRESS, " +
+              "GUEST_CATEGORY, GUEST_TYPE, ID_TYPE, ID_NUMBER, " +
+              "ID_PHOTO, GUEST_PHOTO,CHECKIN_DATE, CHECKIN_DATETIME, STATUS, CREATED_BY) " +
+              "VALUES (GH_BOOKING_SEQ.NEXTVAL,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
 
-    	        con.setAutoCommit(false);
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setInt(1, roomId);
+            ps.setString(2, guestName);
+            ps.setString(3, mobile);
+            ps.setString(4, address);
+            ps.setString(5, guestCategory);
+            ps.setString(6, guestType);
+            ps.setString(7, idType);
+            ps.setString(8, idNumber);
+            ps.setBlob(9, idPhoto);
+            ps.setBlob(10, guestPhoto);
+            ps.setDate(11, new java.sql.Date(checkinTs.getTime()));
 
-    	        String insertSql =
-    	          "INSERT INTO PERSONNEL.GH_BOOKING_MAIN " +
-    	          "(BOOKING_ID, ROOM_ID, GUEST_NAME, MOBILE_NO, " +
-    	          " GUEST_CATEGORY, GUEST_TYPE, CHECKIN_DATETIME, STATUS, CREATED_BY) " +
-    	          "VALUES (GH_BOOKING_SEQ.NEXTVAL,?,?,?,?,?,?,?,?)";
+            ps.setTimestamp(12, checkinTs);
+            ps.setString(13, "CHECKED_IN");
+            ps.setString(14, createdBy);
 
-    	        PreparedStatement ps1 = con.prepareStatement(insertSql);
-    	        ps1.setInt(1, roomId);
-    	        ps1.setString(2, guestName);
-    	        ps1.setString(3, mobile);
-    	        ps1.setString(4, category);
-    	        ps1.setString(5, type);
-    	        ps1.setTimestamp(6, checkinTs);
-    	        ps1.setString(7, "CHECKED_IN");
-    	        ps1.setString(8, createdBy);
+            return ps.executeUpdate() == 1;
 
-    	        int a = ps1.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 
-    	        String roomSql =
-    	          "UPDATE PERSONNEL.GH_ROOM_MASTER SET STATUS='OCCUPIED' WHERE ROOM_ID=?";
-
-    	        PreparedStatement ps2 = con.prepareStatement(roomSql);
-    	        ps2.setInt(1, roomId);
-
-    	        int b = ps2.executeUpdate();
-
-    	        if (a == 1 && b == 1) {
-    	            con.commit();
-    	            return true;
-    	        }
-    	        con.rollback();
-
-    	    } catch (Exception e) {
-    	        e.printStackTrace();
-    	    }
-    	    return false;
-    	}
     	
     
 
