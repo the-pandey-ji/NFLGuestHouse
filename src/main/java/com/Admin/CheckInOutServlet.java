@@ -18,7 +18,7 @@ import com.entity.User;
 
 @WebServlet("/checkInOut")
 @MultipartConfig(
-    maxFileSize = 5 * 1024 * 1024,      // 5 MB
+    maxFileSize = 5 * 1024 * 1024,
     maxRequestSize = 10 * 1024 * 1024
 )
 public class CheckInOutServlet extends HttpServlet {
@@ -30,32 +30,47 @@ public class CheckInOutServlet extends HttpServlet {
         HttpSession session = req.getSession();
         BookingDAO dao = new BookingDAO();
 
-        // ===== Logged-in user FULL NAME =====
         User user = (User) session.getAttribute("userObj");
         String createdBy = user != null ? user.getFullName() : "UNKNOWN";
 
         String mode = req.getParameter("mode");
         boolean result = false;
 
+        if (mode == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid request");
+            return;
+        }
+
         // ===== Common fields =====
         String address = req.getParameter("address");
         String idType = req.getParameter("idType");
         String idNumber = req.getParameter("idNumber");
 
-        // ===== File upload =====
-        Part idPhotoPart = req.getPart("idPhoto");
-        Part guestPhotoPart = req.getPart("guestPhoto");
+        InputStream idPhoto = null;
+        InputStream guestPhoto = null;
 
-        InputStream idPhoto = idPhotoPart != null ? idPhotoPart.getInputStream() : null;
-        InputStream guestPhoto = guestPhotoPart != null ? guestPhotoPart.getInputStream() : null;
+        // ===== FILE UPLOAD ONLY FOR THESE MODES =====
+        if ("BOOKING".equals(mode) || "DIRECT".equals(mode)) {
+
+            Part idPhotoPart = req.getPart("idPhoto");
+            Part guestPhotoPart = req.getPart("guestPhoto");
+
+            if (idPhotoPart != null && idPhotoPart.getSize() > 0) {
+                idPhoto = idPhotoPart.getInputStream();
+            }
+
+            if (guestPhotoPart != null && guestPhotoPart.getSize() > 0) {
+                guestPhoto = guestPhotoPart.getInputStream();
+            }
+        }
 
         // ===== BOOKING CHECK-IN =====
         if ("BOOKING".equals(mode)) {
 
             int bookingId = Integer.parseInt(req.getParameter("bookingId"));
-            String dt = req.getParameter("checkinDatetime");
-            Timestamp checkinTs =
-                Timestamp.valueOf(dt.replace("T", " ") + ":00");
+            Timestamp checkinTs = Timestamp.valueOf(
+                req.getParameter("checkinDatetime").replace("T", " ") + ":00"
+            );
 
             result = dao.checkInWithBooking(
                 bookingId,
@@ -67,9 +82,9 @@ public class CheckInOutServlet extends HttpServlet {
                 checkinTs,
                 createdBy
             );
-
         }
-        // ===== DIRECT CHECK-IN (WALK-IN) =====
+
+        // ===== DIRECT CHECK-IN =====
         else if ("DIRECT".equals(mode)) {
 
             int roomId = Integer.parseInt(req.getParameter("roomId"));
@@ -78,9 +93,9 @@ public class CheckInOutServlet extends HttpServlet {
             String guestCategory = req.getParameter("guestCategory");
             String guestType = req.getParameter("guestType");
 
-            String dt = req.getParameter("checkinDatetime");
-            Timestamp checkinTs =
-                Timestamp.valueOf(dt.replace("T", " ") + ":00");
+            Timestamp checkinTs = Timestamp.valueOf(
+                req.getParameter("checkinDatetime").replace("T", " ") + ":00"
+            );
 
             result = dao.directCheckIn(
                 roomId,
@@ -97,16 +112,7 @@ public class CheckInOutServlet extends HttpServlet {
                 createdBy
             );
         }
-        // ===== CHECK-OUT =====
-		/*
-		 * else if ("CHECKOUT".equals(mode)) {
-		 * 
-		 * int bookingId = Integer.parseInt(req.getParameter("bookingId")); String dt =
-		 * req.getParameter("checkoutDatetime"); Timestamp checkoutTs =
-		 * Timestamp.valueOf(dt.replace("T", " ") + ":00");
-		 * 
-		 * result = dao.checkOut(bookingId, checkoutTs); }
-		 */
+
         // ===== CANCEL BOOKING =====
         else if ("CANCEL".equals(mode)) {
 

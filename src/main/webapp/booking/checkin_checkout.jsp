@@ -271,18 +271,45 @@ Proceed to Billing
 
 
 <!-- ================= CANCEL BOOKING ================= -->
+<!-- ================= CANCEL BOOKING ================= -->
 <div id="cancelDiv" class="section" style="display:none;">
 <h5>Cancel Booking</h5>
 
 <form action="<%=request.getContextPath()%>/checkInOut" method="post">
 <input type="hidden" name="mode" value="CANCEL">
 
-<label>Booking ID</label>
-<input type="number" name="bookingId" class="form-control" required>
+<label>Select Booking to Cancel</label>
+<select name="bookingId" class="form-control" required>
+    <option value="">-- Booking ID | Guest | Date --</option>
 
-<button class="btn btn-warning mt-3">Cancel Booking</button>
+    <%
+        bookedList =
+            (List<Booking>) request.getAttribute("bookedList");
+
+        if (bookedList != null) {
+            for (Booking b : bookedList) {
+    %>
+        <option value="<%= b.getBookingId() %>">
+            <%= b.getBookingId() %> |
+            <%= b.getGuestName() %> |
+            <%= b.getCreatedDate() %>
+        </option>
+    <%
+            }
+        }
+    %>
+</select>
+
+<p class="text-muted mt-2">
+Only <b>BOOKED</b> reservations are shown.
+</p>
+
+<button class="btn btn-warning mt-3">
+Cancel Booking
+</button>
 </form>
 </div>
+
 
 </div>
 
